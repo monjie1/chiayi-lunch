@@ -1,0 +1,1390 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#f4efe4">
+<title>今天午餐吃什麼？</title>
+
+<style>
+:root {
+  --paper-bg: #f4efe4;
+  --paper: #fffdf8;
+  --paper-deep: #eee7d8;
+  --green: #71866a;
+  --green-dark: #405743;
+  --green-soft: #e7ecdf;
+  --orange: #d99561;
+  --orange-soft: #f5e5d4;
+  --ink: #39443b;
+  --muted: #7b8176;
+  --line: #e5dfd2;
+  --shadow: 0 16px 42px rgba(69, 76, 57, .09);
+}
+
+* { box-sizing: border-box; }
+
+html { min-height: 100%; }
+
+body {
+  position: relative;
+  min-height: 100vh;
+  margin: 0;
+  overflow-x: hidden;
+  color: var(--ink);
+  background-color: var(--paper-bg);
+  background-image:
+    radial-gradient(rgba(104, 121, 91, .12) .8px, transparent .8px),
+    linear-gradient(135deg, rgba(255,255,255,.36), transparent 52%);
+  background-size: 26px 26px, auto;
+  font-family: system-ui, "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+}
+
+button { font: inherit; cursor: pointer; border: 0; }
+button:focus-visible, a:focus-visible {
+  outline: 3px solid rgba(217, 149, 97, .55);
+  outline-offset: 3px;
+}
+
+.site-header {
+  position: relative;
+  z-index: 1;
+  padding: 38px 18px 20px;
+  text-align: center;
+}
+
+.brand-stamp {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border: 1px solid #cbd3c1;
+  border-radius: 999px;
+  color: var(--green-dark);
+  background: rgba(255,253,248,.7);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .16em;
+}
+
+.brand-stamp::before, .brand-stamp::after {
+  content: "✳";
+  color: var(--orange);
+  font-size: 12px;
+}
+
+h1 {
+  margin: 13px 0 7px;
+  color: var(--green-dark);
+  font-family: "Noto Serif TC", "Source Han Serif TC", "PMingLiU", serif;
+  font-size: clamp(29px, 6vw, 42px);
+  font-weight: 800;
+  letter-spacing: .06em;
+}
+
+.subtitle {
+  color: var(--muted);
+  font-size: 14px;
+  letter-spacing: .04em;
+  line-height: 1.7;
+}
+
+.header-flourish {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  margin: 15px auto 0;
+  color: #9aa68b;
+  font-size: 12px;
+}
+
+.header-flourish span {
+  width: 46px;
+  height: 1px;
+  background: #b9c2ad;
+}
+
+main {
+  position: relative;
+  z-index: 1;
+  width: min(100% - 30px, 820px);
+  margin: 0 auto 42px;
+}
+
+.panel {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(17px, 4vw, 30px);
+  border: 1px solid rgba(205, 198, 181, .85);
+  border-radius: 30px 26px 29px 24px;
+  background: rgba(255,253,248,.94);
+  box-shadow: var(--shadow);
+}
+
+.panel::before, .panel::after {
+  position: absolute;
+  z-index: 0;
+  width: 38px;
+  height: 38px;
+  border-color: #c5cfb9;
+  border-style: solid;
+  content: "";
+  opacity: .8;
+  pointer-events: none;
+}
+.panel::before {
+  top: 12px;
+  left: 12px;
+  border-width: 1px 0 0 1px;
+  border-radius: 12px 0 0;
+}
+.panel::after {
+  right: 12px;
+  bottom: 12px;
+  border-width: 0 1px 1px 0;
+  border-radius: 0 0 12px;
+}
+
+.panel-heading {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  margin: 2px 4px 4px;
+}
+
+.section-kicker {
+  margin-bottom: 5px;
+  color: var(--orange);
+  font-size: 10px;
+  font-weight: 850;
+  letter-spacing: .2em;
+}
+
+h2 {
+  margin: 0 0 6px;
+  color: var(--green-dark);
+  font-family: "Noto Serif TC", "Source Han Serif TC", "PMingLiU", serif;
+  font-size: 21px;
+  letter-spacing: .04em;
+}
+
+.hint {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.count-badge {
+  flex: 0 0 auto;
+  margin-top: 5px;
+  padding: 7px 11px;
+  border: 1px dashed #bdc8b2;
+  border-radius: 7px 12px 8px 11px;
+  color: var(--green-dark);
+  background: #f2f5ec;
+  font-size: 11px;
+  font-weight: 750;
+  white-space: nowrap;
+}
+
+.wheel-wrap {
+  position: relative;
+  width: min(78vw, 430px);
+  margin: 24px auto 20px;
+  aspect-ratio: 1;
+}
+
+.wheel {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 8px solid var(--paper);
+  border-radius: 50%;
+  background: var(--paper);
+  box-shadow: 0 7px 22px rgba(61, 73, 54, .18), 0 0 0 1px #e9e3d7;
+  transition: transform 1.85s cubic-bezier(.12,.72,.12,1);
+}
+
+.pointer {
+  position: absolute;
+  z-index: 2;
+  top: -8px;
+  left: 50%;
+  width: 0;
+  height: 0;
+  transform: translateX(-50%);
+  border-top: 30px solid var(--orange);
+  border-right: 15px solid transparent;
+  border-left: 15px solid transparent;
+  filter: drop-shadow(0 2px 1px rgba(75, 65, 48, .18));
+}
+
+.wheel-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  width: 78px;
+  height: 78px;
+  transform: translate(-50%,-50%);
+  place-items: center;
+  border: 5px solid #fff;
+  border-radius: 50%;
+  background: #fbf8ee;
+  box-shadow: 0 2px 10px rgba(0,0,0,.13);
+  color: var(--green-dark);
+  font-size: 25px;
+}
+
+.wheel-caption {
+  margin-top: -7px;
+  color: #92988a;
+  font-size: 11px;
+  letter-spacing: .1em;
+  text-align: center;
+}
+
+.actions {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 19px 0 4px;
+}
+
+.primary {
+  min-width: 190px;
+  padding: 14px 27px;
+  border: 2px solid #fff9ed;
+  border-radius: 999px;
+  color: #fffdf8;
+  background: var(--green);
+  box-shadow: 0 5px 0 #52694e, 0 8px 16px rgba(69, 92, 62, .16);
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+}
+.primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  background: #607958;
+  box-shadow: 0 7px 0 #52694e, 0 11px 19px rgba(69, 92, 62, .18);
+}
+.primary:active:not(:disabled) {
+  transform: translateY(3px);
+  box-shadow: 0 2px 0 #52694e;
+}
+
+.secondary {
+  padding: 12px 17px;
+  border: 1px solid #dbe1d4;
+  border-radius: 999px;
+  color: var(--green-dark);
+  background: #f0f3eb;
+  font-size: 13px;
+  font-weight: 700;
+  transition: background .15s ease, transform .15s ease;
+}
+.secondary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  background: #e6ecdf;
+}
+
+.primary:disabled, .secondary:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+.result {
+  display: none;
+  margin-top: 23px;
+  padding: 20px;
+  border: 1px dashed #c6cfba;
+  border-radius: 17px 22px 17px 22px;
+  background: #f3f5ed;
+  text-align: center;
+}
+.result.show { display: block; animation: result-in .35s ease-out both; }
+@keyframes result-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.result-title {
+  color: #879477;
+  font-size: 12px;
+  font-weight: 850;
+  letter-spacing: .16em;
+}
+
+.result-name {
+  margin: 8px 0 13px;
+  color: var(--green-dark);
+  font-family: "Noto Serif TC", "Source Han Serif TC", "PMingLiU", serif;
+  font-size: clamp(22px, 5vw, 29px);
+  font-weight: 850;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.result-meta {
+  max-width: 540px;
+  margin: 0 auto;
+  padding: 13px 15px;
+  border-radius: 12px;
+  background: rgba(255,253,248,.82);
+  color: #596354;
+  font-size: 13px;
+  line-height: 1.9;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+
+.result-meta:empty { display: none; }
+
+.maplink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  margin-top: 15px;
+  padding: 11px 19px;
+  border-radius: 999px;
+  color: #fff;
+  background: var(--orange);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 800;
+  transition: background .15s ease, transform .15s ease;
+}
+.maplink:hover { transform: translateY(-1px); background: #ca8050; }
+
+.tiny {
+  margin-top: 18px;
+  color: #96998e;
+  font-size: 11px;
+  text-align: center;
+}
+
+.confetti {
+  position: fixed;
+  z-index: 10;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.confetti i {
+  position: absolute;
+  top: -20px;
+  width: 9px;
+  height: 15px;
+  animation: fall 3s linear forwards;
+}
+@keyframes fall {
+  to { transform: translateY(110vh) rotate(720deg); opacity: .2; }
+}
+
+.doodle {
+  position: fixed;
+  z-index: 0;
+  width: 150px;
+  color: #83947a;
+  opacity: .28;
+  pointer-events: none;
+}
+.doodle svg { display: block; width: 100%; height: auto; }
+.doodle-left { top: 145px; left: 2.2%; transform: rotate(-9deg); }
+.doodle-right { right: 2.5%; bottom: 90px; width: 165px; transform: rotate(7deg); }
+
+footer {
+  position: relative;
+  z-index: 1;
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 0 18px 28px;
+  color: #92968a;
+  font-size: 11px;
+  line-height: 1.7;
+  text-align: center;
+}
+
+@media (max-width: 700px) {
+  .doodle { width: 100px; opacity: .16; }
+  .doodle-left { top: 155px; left: -20px; }
+  .doodle-right { right: -25px; bottom: 65px; width: 115px; }
+}
+
+@media (max-width: 520px) {
+  .site-header { padding: 28px 14px 16px; }
+  main { width: min(100% - 20px, 820px); }
+  .panel { padding: 17px 13px 19px; border-radius: 23px; }
+  .panel-heading { align-items: flex-start; margin-right: 2px; margin-left: 2px; }
+  h2 { font-size: 18px; }
+  .hint { max-width: 250px; font-size: 12px; }
+  .count-badge { padding: 6px 8px; font-size: 10px; }
+  .wheel-wrap { width: min(84vw, 370px); margin-top: 22px; }
+  .wheel { border-width: 6px; }
+  .wheel-center { width: 66px; height: 66px; font-size: 22px; }
+  .actions { gap: 9px; }
+  .primary { width: min(100%, 280px); }
+  .secondary { padding: 11px 14px; font-size: 12px; }
+  .result { padding: 17px 13px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="doodle doodle-left" aria-hidden="true">
+  <svg viewBox="0 0 180 210" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 184C55 151 70 113 83 34" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+    <path d="M53 139C26 133 17 113 19 93C42 96 59 112 53 139Z" stroke="currentColor" stroke-width="2"/>
+    <path d="M66 103C91 99 105 81 105 59C83 62 67 79 66 103Z" stroke="currentColor" stroke-width="2"/>
+    <path d="M76 68C54 59 48 42 54 24C74 31 84 47 76 68Z" stroke="currentColor" stroke-width="2"/>
+    <path d="M39 166C61 164 76 174 82 191C60 194 43 185 39 166Z" stroke="currentColor" stroke-width="2"/>
+    <path d="M54 139L30 111M68 102L92 75M77 67L61 39M55 166L68 181" stroke="currentColor" stroke-width="1.4"/>
+    <path d="M125 27L129 39L141 43L129 47L125 59L121 47L109 43L121 39L125 27Z" stroke="#D99561" stroke-width="1.8"/>
+  </svg>
+</div>
+
+<div class="doodle doodle-right" aria-hidden="true">
+  <svg viewBox="0 0 190 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M29 73C31 112 57 137 96 137C135 137 159 112 161 73H29Z" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/>
+    <path d="M22 72C22 64 146 64 168 72C168 81 22 81 22 72Z" stroke="currentColor" stroke-width="2.2"/>
+    <path d="M47 54C38 42 52 33 47 21M91 54C82 42 96 33 91 21M135 54C126 42 140 33 135 21" stroke="#D99561" stroke-width="2" stroke-linecap="round"/>
+    <path d="M51 103C66 113 80 117 96 117C112 117 127 113 140 103" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M28 143L20 149M162 143L170 149M95 145V155" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+  </svg>
+</div>
+
+<header class="site-header">
+  <div class="brand-stamp">嘉義 · 午餐提案</div>
+  <h1>今天午餐吃什麼？</h1>
+  <div class="subtitle">把選擇交給好運氣，發現嘉義巷弄裡的美味。</div>
+  <div class="header-flourish"><span></span> 今日好食運 <span></span></div>
+</header>
+
+<main>
+  <section class="panel">
+    <div class="panel-heading">
+      <div>
+        <div class="section-kicker">TODAY'S LUNCH DRAW</div>
+        <h2 id="restaurantHeading">轉一下，今天就吃這家</h2>
+        <p class="hint" id="restaurantHint">不必煩惱，從嘉義餐廳清單中隨機挑一家。</p>
+      </div>
+      <div class="count-badge">嘉義美食清單</div>
+    </div>
+
+    <div class="wheel-wrap">
+      <div class="pointer"></div>
+      <canvas class="wheel" id="restaurantWheel" width="700" height="700" aria-label="餐廳隨機抽選轉盤"></canvas>
+      <div class="wheel-center" aria-hidden="true">🥢</div>
+    </div>
+    <div class="wheel-caption">轉盤上的店名為簡稱，抽中後會顯示完整資訊</div>
+
+    <div class="actions">
+      <button class="primary" id="spinButton">✦　開始抽午餐</button>
+      <button class="secondary" id="soundToggle" aria-pressed="true">♫　音效：開啟</button>
+      <button class="secondary" id="resetButton">↻　重新抽一間</button>
+    </div>
+
+    <div class="result" id="restaurantResult" role="status" aria-live="polite">
+      <div class="result-title">✿　今天就決定吃這家　✿</div>
+      <div class="result-name" id="restaurantName"></div>
+      <div class="result-meta" id="restaurantInfo"></div>
+      <a class="maplink" id="mapLink" target="_blank" rel="noopener">在 Google 地圖查看地址 ↗</a>
+    </div>
+
+    <div class="tiny" id="restaurantCount"></div>
+  </section>
+</main>
+
+<div class="confetti" id="confetti"></div>
+
+<footer>
+  餐廳清單由管理者預先設定；均消為網路參考值，實際價格、營業時間與店址請以店家最新資訊為準。
+</footer>
+
+<script>
+
+// =====================================
+// 1. 預設餐廳資料
+// =====================================
+
+const RESTAURANTS = [
+
+  // ---------- 原有餐廳（11 家） ----------
+  {
+    name:"隆珍好食",
+    category:"台式料理",
+    address:"嘉義市西區垂楊路446號",
+    price:"約 NT$100–200",
+    feature:"台式家常餐點；有內用座位"
+  },
+  {
+    name:"阿岸米糕－阿彰的店",
+    category:"台式料理",
+    address:"嘉義市西區仁愛路356號",
+    price:"約 NT$100–200",
+    feature:"米糕及台式小吃；有內用座位"
+  },
+  {
+    name:"斟有味開山豬腳",
+    category:"台式料理",
+    address:"嘉義市西區仁愛路273號",
+    price:"約 NT$100–200",
+    feature:"豬腳及台式飯食；有內用座位"
+  },
+  {
+    name:"盛村日本料理",
+    category:"日式料理",
+    address:"嘉義市西區國華街160號",
+    price:"約 NT$200",
+    feature:"日式料理；有內用座位"
+  },
+  {
+    name:"伍肆捌特製意麵",
+    category:"麵食／水餃",
+    address:"嘉義市西區垂楊路548號",
+    price:"約 NT$120",
+    feature:"意麵及中式麵食；有內用座位"
+  },
+  {
+    name:"Mr.RAMEN 豚骨拉麵嘉義店",
+    category:"麵食／水餃",
+    address:"嘉義市西區仁愛路229號",
+    price:"約 NT$149",
+    feature:"豬骨拉麵；有內用座位"
+  },
+  {
+    name:"找。餐 Bresh",
+    category:"咖啡廳／早午餐",
+    address:"嘉義市西區仁愛路418號",
+    price:"約 NT$130",
+    feature:"早午餐及簡餐；有內用座位"
+  },
+  {
+    name:"路易莎咖啡 新嘉義垂楊門市",
+    category:"咖啡廳／早午餐",
+    address:"嘉義市西區垂楊路396號",
+    price:"依品項",
+    feature:"咖啡、輕食；有內用座位"
+  },
+  {
+    name:"剛剛好麵舖",
+    category:"麵食／水餃",
+    address:"嘉義市西區文化路167號",
+    price:"均消約 NT$140",
+    feature:"叻沙麵、肉骨茶麵、滷大排飯；午餐時段營業"
+  },
+  {
+    name:"螺螄福 Rose food 正宗柳州螺螄粉（嘉義文化店）",
+    category:"中式料理",
+    address:"嘉義市東區文化路222號",
+    price:"均消約 NT$200；部分螺螄粉約 NT$158",
+    feature:"柳州螺螄粉、南京老鴨湯粉；有酸辣與不辣選擇"
+  },
+  {
+    name:"御皇蒸食",
+    category:"麵食／水餃",
+    address:"嘉義市東區北榮街83號1樓",
+    price:"均消約 NT$100",
+    feature:"小籠包、燒賣、蒸餃、湯餃及鍋燒麵"
+  },
+
+  // ---------- 新增餐廳：台式料理 ----------
+  {
+    name:"高雄周燒肉飯",
+    category:"台式料理",
+    address:"嘉義市垂楊路485號",
+    feature:"燒肉飯"
+  },
+  {
+    name:"Ko’s Lunchbox 好食便當",
+    category:"台式料理",
+    address:"嘉義市國華街104號",
+    feature:"便當"
+  },
+  {
+    name:"好福便當",
+    category:"台式料理",
+    address:"嘉義市忠義街32號",
+    feature:"便當"
+  },
+  {
+    name:"永和市場貓人美食小站",
+    category:"台式料理",
+    address:"嘉義市垂楊路766號"
+  },
+  {
+    name:"護家莊",
+    category:"台式料理",
+    address:"嘉義市民生北路56號"
+  },
+  {
+    name:"八八鹿餐館",
+    category:"台式料理",
+    address:"嘉義市垂楊路271號"
+  },
+  {
+    name:"西市魯熟肉",
+    category:"台式料理",
+    address:"嘉義市忠義街52號",
+    feature:"滷味／熟肉"
+  },
+  {
+    name:"滷憶食堂",
+    category:"台式料理",
+    address:"嘉義市文化路451號",
+    feature:"滷味／食堂"
+  },
+  {
+    name:"林聰明砂鍋魚頭（總店）",
+    category:"台式料理",
+    address:"嘉義市中正路361號",
+    feature:"砂鍋魚頭"
+  },
+
+  // ---------- 新增餐廳：日式料理 ----------
+  {
+    name:"小倉日式料理（原吉品屋）",
+    category:"日式料理",
+    address:"嘉義市延平街213號"
+  },
+  {
+    name:"旬日本料理",
+    category:"日式料理",
+    address:"嘉義市垂楊路453號"
+  },
+  {
+    name:"杉丼食堂",
+    category:"日式料理",
+    address:"嘉義市民生北路186號",
+    feature:"丼飯"
+  },
+  {
+    name:"裕屋商店",
+    category:"日式料理",
+    address:"嘉義市西門街216號1樓"
+  },
+
+  // ---------- 新增餐廳：韓式料理 ----------
+  {
+    name:"元品韓式美食",
+    category:"韓式料理",
+    address:"嘉義市延平街272號"
+  },
+
+  // ---------- 新增餐廳：義式料理 ----------
+  {
+    name:"伍梨義大利麵",
+    category:"義式料理",
+    address:"嘉義市垂楊路29-1號",
+    feature:"義大利麵"
+  },
+
+  // ---------- 新增餐廳：港式料理 ----------
+  {
+    name:"興李記港式燒臘",
+    category:"港式料理",
+    address:"嘉義市建國路50號之1 1號",
+    feature:"港式燒臘"
+  },
+
+  // ---------- 新增餐廳：健康餐／輕食 ----------
+  {
+    name:"輕盒力健康餐",
+    category:"健康餐／輕食",
+    address:"嘉義市建成街36巷1號",
+    feature:"健康餐盒"
+  },
+  {
+    name:"享初好食",
+    category:"健康餐／輕食",
+    address:"嘉義市興雅路83號"
+  },
+
+  // ---------- 新增餐廳：中式料理 ----------
+  {
+    name:"粥年慶",
+    category:"中式料理",
+    address:"嘉義市建成街33號",
+    feature:"粥品、鍋燒麵"
+  },
+
+  // ---------- 新增餐廳：速食／漢堡 ----------
+  {
+    name:"麥當勞 嘉義垂楊店",
+    category:"速食／漢堡",
+    address:"嘉義市垂楊路468號"
+  },
+  {
+    name:"漢堡王 嘉義中山店",
+    category:"速食／漢堡",
+    address:"嘉義市中山路421號"
+  },
+
+  // ---------- 新增餐廳：麵食／水餃 ----------
+  {
+    name:"余媽媽老麵店（創始店）",
+    category:"麵食／水餃",
+    address:"嘉義市成功街28號",
+    feature:"麵店"
+  },
+  {
+    name:"老張麵店",
+    category:"麵食／水餃",
+    address:"嘉義市平等街105號",
+    feature:"麵店"
+  },
+  {
+    name:"楊家大院",
+    category:"麵食／水餃",
+    address:"嘉義市民族路836號"
+  },
+  {
+    name:"崇文錦魯麵",
+    category:"麵食／水餃",
+    address:"嘉義市崇文街107號",
+    feature:"魯麵"
+  },
+  {
+    name:"京站永春湯包麵館",
+    category:"麵食／水餃",
+    address:"嘉義市中興路341號",
+    feature:"湯包、麵食"
+  },
+  {
+    name:"阿潘包子店",
+    category:"麵食／水餃",
+    address:"嘉義市文化路473號",
+    feature:"包子"
+  },
+
+  // ---------- 新增餐廳：咖啡廳／早午餐 ----------
+  {
+    name:"艾革手作廚房",
+    category:"咖啡廳／早午餐",
+    address:"嘉義市垂楊路137號"
+  },
+  {
+    name:"叉里包",
+    category:"咖啡廳／早午餐",
+    address:"嘉義市新榮路75-3號"
+  },
+  {
+    name:"Archers Kitchen 弓箭手",
+    category:"咖啡廳／早午餐",
+    address:"嘉義市永安街13巷2號"
+  },
+  {
+    name:"Nonamelab",
+    category:"咖啡廳／早午餐",
+    address:"嘉義市西門街127號"
+  },
+  {
+    name:"二樂 TWO HOT CAFE",
+    category:"咖啡廳／早午餐",
+    address:"嘉義市延平街243號"
+  },
+  {
+    name:"早晨小姐",
+    category:"咖啡廳／早午餐",
+    address:"嘉義市和平路200號"
+  },
+
+  // ---------- 新增餐廳：火鍋 ----------
+  {
+    name:"橘子火鍋",
+    category:"火鍋",
+    address:"嘉義市興業西路"
+  },
+  {
+    name:"新垣祖鍋物",
+    category:"火鍋",
+    address:"嘉義市大雅路二段"
+  },
+
+  // ---------- 新增餐廳：燒肉／烤肉 ----------
+  {
+    name:"嘉義頂山門烤肉",
+    category:"燒肉／烤肉",
+    address:"嘉義市垂楊路603號"
+  },
+  {
+    name:"吃烤肉",
+    category:"燒肉／烤肉",
+    address:"嘉義市中正路535號"
+  }
+];
+
+
+// =====================================
+// 2. 系統變數
+// =====================================
+
+const $ = id => document.getElementById(id);
+
+let spinning = false;
+let soundEnabled = true;
+let audioContext = null;
+let tickTimer = null;
+
+const SPIN_MS = 1850;
+
+// 轉盤顯示簡稱；抽選結果仍使用下方資料中的完整店名。
+const WHEEL_LABELS = {
+  "隆珍好食": "隆珍",
+  "阿岸米糕－阿彰的店": "阿岸米糕",
+  "斟有味開山豬腳": "斟有味",
+  "盛村日本料理": "盛村",
+  "伍肆捌特製意麵": "伍肆捌",
+  "Mr.RAMEN 豚骨拉麵嘉義店": "Mr.RAMEN",
+  "找。餐 Bresh": "找餐",
+  "路易莎咖啡 新嘉義垂楊門市": "路易莎",
+  "剛剛好麵舖": "剛剛好",
+  "螺螄福 Rose food 正宗柳州螺螄粉（嘉義文化店）": "螺螄福",
+  "御皇蒸食": "御皇",
+  "高雄周燒肉飯": "高雄周",
+  "Ko’s Lunchbox 好食便當": "Ko’s",
+  "好福便當": "好福",
+  "永和市場貓人美食小站": "貓人小站",
+  "護家莊": "護家莊",
+  "八八鹿餐館": "八八鹿",
+  "西市魯熟肉": "西市魯肉",
+  "滷憶食堂": "滷憶",
+  "林聰明砂鍋魚頭（總店）": "林聰明",
+  "小倉日式料理（原吉品屋）": "小倉",
+  "旬日本料理": "旬日本",
+  "杉丼食堂": "杉丼",
+  "裕屋商店": "裕屋",
+  "元品韓式美食": "元品韓式",
+  "伍梨義大利麵": "伍梨",
+  "興李記港式燒臘": "興李記",
+  "輕盒力健康餐": "輕盒力",
+  "享初好食": "享初",
+  "粥年慶": "粥年慶",
+  "麥當勞 嘉義垂楊店": "麥當勞",
+  "漢堡王 嘉義中山店": "漢堡王",
+  "余媽媽老麵店（創始店）": "余媽媽",
+  "老張麵店": "老張",
+  "楊家大院": "楊家",
+  "崇文錦魯麵": "崇文錦",
+  "京站永春湯包麵館": "京站湯包",
+  "阿潘包子店": "阿潘包子",
+  "艾革手作廚房": "艾革",
+  "叉里包": "叉里包",
+  "Archers Kitchen 弓箭手": "弓箭手",
+  "Nonamelab": "Noname",
+  "二樂 TWO HOT CAFE": "二樂咖啡",
+  "早晨小姐": "早晨",
+  "橘子火鍋": "橘子鍋",
+  "新垣祖鍋物": "新垣祖",
+  "嘉義頂山門烤肉": "頂山門",
+  "吃烤肉": "吃烤肉"
+};
+
+function getWheelLabel(restaurant) {
+  return WHEEL_LABELS[restaurant.name] || restaurant.name;
+}
+
+
+// =====================================
+// 3. 繪製轉盤
+// =====================================
+
+function drawWheel(canvas, items) {
+
+  const ctx = canvas.getContext("2d");
+  const n = items.length;
+
+  const cx = 350;
+  const cy = 350;
+  const r = 340;
+
+  ctx.clearRect(0,0,700,700);
+
+  if (!n) {
+    ctx.fillStyle = "#e8eee2";
+    ctx.beginPath();
+    ctx.arc(cx,cy,r,0,Math.PI*2);
+    ctx.fill();
+
+    ctx.fillStyle = "#40533e";
+    ctx.font = "bold 26px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("準備抽選",cx,cy);
+    return;
+  }
+
+  const colors = [
+    "#dce8d4","#f7dfc8","#e9e8d7",
+    "#f0d8d0","#d7e4df","#f4e8bd",
+    "#e6dfef","#f1e2d3","#dce4c3",
+    "#f5d9b8","#d9e8e8","#eadfe0"
+  ];
+
+  for (let i=0;i<n;i++) {
+
+    const a = -Math.PI/2 + i*2*Math.PI/n;
+    const b = a + 2*Math.PI/n;
+
+    ctx.beginPath();
+    ctx.moveTo(cx,cy);
+    ctx.arc(cx,cy,r,a,b);
+    ctx.closePath();
+
+    ctx.fillStyle = colors[i%colors.length];
+    ctx.fill();
+
+    ctx.strokeStyle = "#fffdf7";
+    ctx.lineWidth = 4;
+    ctx.stroke();
+
+    ctx.save();
+    ctx.translate(cx,cy);
+    ctx.rotate(a+Math.PI/n);
+
+    let size = Math.min(
+      25,
+      Math.max(12,(2*Math.PI*r/n)*0.18)
+    );
+
+    ctx.font = `bold ${size}px sans-serif`;
+    ctx.textAlign = "right";
+    ctx.textBaseline = "middle";
+    ctx.fillStyle = "#43523f";
+
+    let label = typeof items[i] === "string" ? items[i] : getWheelLabel(items[i]);
+    const maxWidth = r-90;
+
+    while (
+      size>12 &&
+      ctx.measureText(label).width>maxWidth
+    ) {
+      size--;
+      ctx.font = `bold ${size}px sans-serif`;
+    }
+
+    if (ctx.measureText(label).width>maxWidth) {
+      while (
+        label.length>1 &&
+        ctx.measureText(label+"…").width>maxWidth
+      ) {
+        label = label.slice(0,-1);
+      }
+      label += "…";
+    }
+
+    ctx.fillText(label,r-24,0);
+    ctx.restore();
+  }
+}
+
+
+// =====================================
+// 4. 音效（已調大音量）
+// =====================================
+
+function getAudio() {
+
+  if (!soundEnabled) return null;
+
+  try {
+    const AC =
+      window.AudioContext ||
+      window.webkitAudioContext;
+
+    if (!AC) return null;
+
+    if (!audioContext) {
+      audioContext = new AC();
+    }
+
+    if (audioContext.state==="suspended") {
+      audioContext.resume();
+    }
+
+    return audioContext;
+
+  } catch {
+    return null;
+  }
+}
+
+
+function tone(
+  freq=440,
+  duration=.07,
+  volume=.25
+) {
+
+  const ctx = getAudio();
+  if (!ctx) return;
+
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+
+  osc.frequency.value = freq;
+  osc.type = "triangle";
+
+  gain.gain.setValueAtTime(
+    .0001,
+    ctx.currentTime
+  );
+
+  gain.gain.exponentialRampToValueAtTime(
+    volume,
+    ctx.currentTime+.01
+  );
+
+  gain.gain.exponentialRampToValueAtTime(
+    .0001,
+    ctx.currentTime+duration
+  );
+
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+
+  osc.start();
+  osc.stop(ctx.currentTime+duration+.02);
+}
+
+
+function startSound() {
+
+  if (!soundEnabled) return;
+
+  let count = 0;
+
+  tone(520,.055,.25);
+
+  tickTimer = setInterval(() => {
+
+    count++;
+
+    tone(
+      360+Math.min(count,12)*24,
+      .045,
+      .22
+    );
+
+  },105);
+}
+
+
+function stopSound() {
+
+  if (tickTimer) {
+    clearInterval(tickTimer);
+    tickTimer = null;
+  }
+
+  tone(660,.12,.35);
+  tone(880,.20,.32);
+}
+
+
+// =====================================
+// 5. 隨機旋轉
+// =====================================
+
+function spin(canvas,items) {
+
+  return new Promise(resolve => {
+
+    if (!items.length) {
+      resolve(null);
+      return;
+    }
+
+    const index = Math.floor(
+      Math.random()*items.length
+    );
+
+    const slice = 360/items.length;
+
+    const current = Number(
+      canvas.dataset.rotation || 0
+    );
+
+    const currentMod =
+      ((current%360)+360)%360;
+
+    const targetMod =
+      (360-(index+.5)*slice)%360;
+
+    const delta =
+      ((targetMod-currentMod)+360)%360;
+
+    const total =
+      current+360*5+delta;
+
+    canvas.style.transitionDuration =
+      SPIN_MS+"ms";
+
+    canvas.style.transform =
+      `rotate(${total}deg)`;
+
+    canvas.dataset.rotation = String(total);
+
+    startSound();
+
+    setTimeout(() => {
+      stopSound();
+      resolve(items[index]);
+    },SPIN_MS);
+
+  });
+}
+
+
+// =====================================
+// 6. 顯示抽選結果
+// =====================================
+
+function showResult(r) {
+
+  $("restaurantName").textContent = r.name;
+
+  const info = [];
+
+  if (r.category) {
+    info.push("料理類別："+r.category);
+  }
+
+  if (r.price) {
+    info.push("人均消費："+r.price);
+  }
+
+  if (r.address) {
+    info.push("餐廳地址："+r.address);
+  }
+
+  if (r.feature) {
+    info.push("餐廳特色："+r.feature);
+  }
+
+  $("restaurantInfo").innerHTML =
+    info.map(x => escapeHTML(x)).join("<br>");
+
+  $("mapLink").href =
+    "https://www.google.com/maps/search/?api=1&query="+
+    encodeURIComponent(r.address || r.name);
+
+  $("restaurantResult").classList.add("show");
+
+  confetti();
+
+  tone(784,.16,.35);
+  tone(988,.22,.35);
+  tone(1175,.30,.32);
+}
+
+
+function escapeHTML(str) {
+
+  return String(str).replace(
+    /[&<>"']/g,
+    c => ({
+      "&":"&amp;",
+      "<":"&lt;",
+      ">":"&gt;",
+      '"':"&quot;",
+      "'":"&#39;"
+    })[c]
+  );
+
+}
+
+
+// =====================================
+// 7. 抽餐廳（唯一的抽選方式）
+// =====================================
+
+async function restaurantSpin() {
+
+  if (spinning) return;
+
+  if (!RESTAURANTS.length) {
+    alert("目前沒有可抽選的餐廳。");
+    return;
+  }
+
+  spinning = true;
+  updateButtons();
+
+  clearResults();
+
+  $("restaurantHint").textContent =
+    "轉盤轉動中，看看今天吃哪一家……";
+
+  $("restaurantHeading").scrollIntoView({
+    behavior:"smooth",
+    block:"center"
+  });
+
+  const picked = await spin(
+    $("restaurantWheel"),
+    RESTAURANTS
+  );
+
+  if (picked) {
+    showResult(picked);
+
+    $("restaurantHint").textContent =
+      "已從全部餐廳中抽出結果！";
+  }
+
+  spinning = false;
+  updateButtons();
+}
+
+
+// =====================================
+// 8. 清除結果及重新抽選
+// =====================================
+
+function clearResults() {
+  $("restaurantResult").classList.remove("show");
+  $("restaurantName").textContent = "";
+  $("restaurantInfo").textContent = "";
+}
+
+// 點擊「重新抽新餐廳」：轉盤歸零後直接重新抽一家
+function resetAndRespin() {
+  if (spinning) return;
+
+  clearResults();
+
+  const wheel = $("restaurantWheel");
+  wheel.style.transitionDuration = "0ms";
+  wheel.style.transform = "rotate(0deg)";
+  wheel.dataset.rotation = "0";
+
+  // 強制瀏覽器套用歸零，再開始新的旋轉
+  void wheel.offsetWidth;
+
+  restaurantSpin();
+}
+
+
+// =====================================
+// 9. 按鈕操作
+// =====================================
+
+function updateButtons() {
+  $("spinButton").disabled = spinning;
+  $("resetButton").disabled = spinning;
+}
+
+$("spinButton").onclick = restaurantSpin;
+
+$("resetButton").onclick = resetAndRespin;
+
+$("soundToggle").onclick = () => {
+  soundEnabled = !soundEnabled;
+  $("soundToggle").textContent = `${soundEnabled ? "♫　音效：開啟" : "♫　音效：關閉"}`;
+  $("soundToggle").setAttribute("aria-pressed", String(soundEnabled));
+
+  if (!soundEnabled && tickTimer) {
+    clearInterval(tickTimer);
+    tickTimer = null;
+  }
+
+  if (soundEnabled) getAudio();
+};
+
+
+// =====================================
+// 10. 抽選完成紙花動畫
+// =====================================
+
+function confetti() {
+
+  const root = $("confetti");
+
+  root.innerHTML = "";
+
+  const colors = [
+    "#d4af37",
+    "#f7e7a1",
+    "#fff4cf",
+    "#c99b45",
+    "#b8893d",
+    "#f4d6a0"
+  ];
+
+  for (let i=0;i<190;i++) {
+
+    const el = document.createElement("i");
+
+    const ribbon = Math.random()>.38;
+
+    el.style.left =
+      Math.random()*100+"%";
+
+    el.style.width =
+      (7+Math.random()*8)+"px";
+
+    el.style.height =
+      ribbon
+        ? (20+Math.random()*30)+"px"
+        : (7+Math.random()*10)+"px";
+
+    el.style.borderRadius =
+      ribbon?"3px":"50%";
+
+    el.style.background =
+      colors[i%colors.length];
+
+    el.style.animationDuration =
+      (2.8+Math.random()*2)+"s";
+
+    el.style.animationDelay =
+      Math.random()+ "s";
+
+    root.appendChild(el);
+  }
+
+  setTimeout(()=>{
+    root.innerHTML="";
+  },5500);
+
+}
+
+
+// =====================================
+// 11. 初始化
+// =====================================
+
+function init() {
+
+  drawWheel(
+    $("restaurantWheel"),
+    RESTAURANTS
+  );
+
+  $("restaurantCount").textContent =
+    `目前有 ${RESTAURANTS.length} 家餐廳參與抽選`;
+
+}
+
+init();
+
+</script>
+
+</body>
+</html>
